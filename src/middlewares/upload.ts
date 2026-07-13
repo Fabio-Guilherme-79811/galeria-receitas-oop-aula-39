@@ -1,17 +1,31 @@
-// ============================================================
-// TODO 1: Configurar o Multer para upload de imagens
-// ============================================================
-// Importar multer e path
-//
-// Criar diskStorage:
-//   destination: "uploads/"
-//   filename: Date.now() + random + extensao (path.extname)
-//
-// Criar fileFilter:
-//   aceitar: image/jpeg, image/png, image/gif, image/webp
-//   rejeitar: cb(new Error("Tipo nao permitido"), false)
-//
-// Exportar:
-//   export const upload = multer({ storage, fileFilter, limits: { fileSize: 5*1024*1024 } });
-// ============================================================
+import multer from "multer";
+import path from "path";
+import { Request } from "express";
 
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "uploads/");
+    },
+    filename: (req, file, cb) => {
+        const timestamp = Date.now();
+        const extension = path.extname(file.originalname);
+        cb(null, `${timestamp}${extension}`);
+    }
+});
+
+const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+    if (allowedTypes.includes(file.mimetype)) {
+        cb(null, true);
+    } else {
+        cb(null, false);
+    }
+};
+
+export const upload = multer({
+    storage: storage,
+    fileFilter: fileFilter,
+    limits: {
+        fileSize: 5 * 1024 * 1024 // 5MB
+    }
+});

@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
 import { ReceitaRepository } from "../models/ReceitaRepository";
 // TODO 2: importar { upload } de "../middlewares/upload"
+import { upload } from "../middlewares/upload";
 
 export const apiRoutes = Router();
 const repo = new ReceitaRepository();
@@ -19,13 +20,12 @@ apiRoutes.get("/api/receitas", async (req: Request, res: Response) => {
 
 // POST /api/receitas - criar nova [TEM TODOs DE UPLOAD]
 // TODO 3: adicionar upload.single("foto") como middleware
-apiRoutes.post("/api/receitas", /* TODO: upload.single("foto"), */ async (req: Request, res: Response) => {
+apiRoutes.post("/api/receitas", upload.single("foto"), async (req: Request, res: Response) => {
   try {
     const { titulo, descricao, tempo } = req.body;
 
     // TODO 4: pegar o caminho da foto do req.file
-    // const foto = req.file ? `/uploads/${req.file.filename}` : null;
-    const foto: string | null = null; // <- substituir pela linha acima
+    const foto = req.file ? `/uploads/${req.file.filename}` : null;
 
     const nova = await repo.criar(titulo, descricao || "", tempo || "", foto);
     res.status(201).json({ sucesso: true, dados: nova.toJSON() });

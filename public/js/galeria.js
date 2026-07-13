@@ -59,17 +59,9 @@ async function criarReceita(event) {
   btn.disabled = true;
   btn.textContent = 'Salvando...';
   try {
-    // TODO: trocar por FormData
-    const titulo = document.querySelector('[name="titulo"]').value;
-    const descricao = document.querySelector('[name="descricao"]').value;
-    const tempo = document.querySelector('[name="tempo"]').value;
     const response = await fetch('/api/receitas', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ titulo, descricao, tempo }),
-      // TODO: substituir as 3 linhas acima por:
-      // body: new FormData(document.getElementById('form-receita')),
-      // (sem headers Content-Type!)
+      body: new FormData(document.getElementById('form-receita'))
     });
     const json = await response.json();
     if (!response.ok) { alert('Erro: ' + json.erro); return; }
